@@ -101,7 +101,7 @@ Serve backend + static build
 
 bash
 Copy
-cd ../backend && pm2 start pm2.config.json
+cd ../backend && pm2 start pm2.config.json -i max
 
 📂 Screenshots
 Dashboard	Job Detail	Profile & Reviews
