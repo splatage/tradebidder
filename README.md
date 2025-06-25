@@ -91,17 +91,18 @@ Mock data includes:
 Jobs, reviews, profiles, and live chat channels
 
 🌐 Deployment with PM2
-Build frontend
+Build and serve frontend
 
 bash
 Copy
-cd frontend && npm run build
+cd frontend && npm run build && pm2 start ecosystem.config.js --env production
+
 Serve backend + static build
 
 bash
 Copy
-cd ../backend
-pm2 start pm2.config.json
+cd ../backend && pm2 start pm2.config.json
+
 📂 Screenshots
 Dashboard	Job Detail	Profile & Reviews
 
