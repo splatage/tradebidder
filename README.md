@@ -60,6 +60,8 @@ cd tradebidder
 bash
 Copy
 cd backend && npm install
+npm install cors --save
+
 cd ../frontend && npm install
 3. Configure Environment
 Create .env inside /backend:
