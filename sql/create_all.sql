@@ -1,29 +1,34 @@
--- bids.sql
-CREATE TABLE bids (
+-- users.sql
+CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  job_id INT NOT NULL,
-  user_id INT NOT NULL,
-  amount DECIMAL(10,2),
-  message TEXT,
-  status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (job_id) REFERENCES jobs(id),
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  password_hash TEXT,
+  dob DATE,
+  is_verified BOOLEAN DEFAULT FALSE,
+  gst_number VARCHAR(50),
+  insurance_uploaded BOOLEAN DEFAULT FALSE,
+  id_uploaded BOOLEAN DEFAULT FALSE,
+  is_suspended BOOLEAN DEFAULT FALSE,
+  role ENUM('user', 'admin') DEFAULT 'user',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 
--- flags.sql
-CREATE TABLE flags (
+-- regions.sql
+CREATE TABLE regions (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  type ENUM('review', 'job', 'user'),
-  target_id INT,
-  reporter_id INT NOT NULL,
-  reason TEXT,
-  admin_notes TEXT,
-  status ENUM('open', 'resolved', 'dismissed') DEFAULT 'open',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (reporter_id) REFERENCES users(id)
+  country VARCHAR(100),
+  region_name VARCHAR(100),
+  region_code VARCHAR(10)
 );
+
+INSERT INTO regions (country, region_name, region_code) VALUES
+('New Zealand', 'Auckland', 'AKL'),
+('New Zealand', 'Wellington', 'WLG'),
+('New Zealand', 'Canterbury', 'CAN'),
+('Australia', 'New South Wales', 'NSW'),
+('Australia', 'Victoria', 'VIC');
 
 
 -- jobs.sql
@@ -48,6 +53,20 @@ CREATE TABLE jobs (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (region_id) REFERENCES regions(id)
+);
+
+
+-- bids.sql
+CREATE TABLE bids (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  job_id INT NOT NULL,
+  user_id INT NOT NULL,
+  amount DECIMAL(10,2),
+  message TEXT,
+  status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (job_id) REFERENCES jobs(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 
@@ -96,20 +115,18 @@ CREATE TABLE portfolio_items (
 );
 
 
--- regions.sql
-CREATE TABLE regions (
+-- flags.sql
+CREATE TABLE flags (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  country VARCHAR(100),
-  region_name VARCHAR(100),
-  region_code VARCHAR(10)
+  type ENUM('review', 'job', 'user'),
+  target_id INT,
+  reporter_id INT NOT NULL,
+  reason TEXT,
+  admin_notes TEXT,
+  status ENUM('open', 'resolved', 'dismissed') DEFAULT 'open',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (reporter_id) REFERENCES users(id)
 );
-
-INSERT INTO regions (country, region_name, region_code) VALUES
-('New Zealand', 'Auckland', 'AKL'),
-('New Zealand', 'Wellington', 'WLG'),
-('New Zealand', 'Canterbury', 'CAN'),
-('Australia', 'New South Wales', 'NSW'),
-('Australia', 'Victoria', 'VIC');
 
 
 -- reviews.sql
@@ -124,26 +141,8 @@ CREATE TABLE reviews (
   is_flagged BOOLEAN DEFAULT FALSE,
   visible BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (job_id) REFERENCES jobs(id),
-  FOREIGN KEY (reviewer_id) REFERENCES users(id),
-  FOREIGN KEY (reviewee_id) REFERENCES users(id)
+  CONSTRAINT fk_review_job FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+  CONSTRAINT fk_review_reviewer FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_review_reviewee FOREIGN KEY (reviewee_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
-
--- users.sql
-CREATE TABLE users (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100),
-  email VARCHAR(100) UNIQUE,
-  password_hash TEXT,
-  dob DATE,
-  is_verified BOOLEAN DEFAULT FALSE,
-  gst_number VARCHAR(50),
-  insurance_uploaded BOOLEAN DEFAULT FALSE,
-  id_uploaded BOOLEAN DEFAULT FALSE,
-  is_suspended BOOLEAN DEFAULT FALSE,
-  role ENUM('user', 'admin') DEFAULT 'user',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 
