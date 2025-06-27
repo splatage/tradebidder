@@ -5,6 +5,7 @@ console.log("pool.getConnection = ", typeof pool.getConnection);
 
 // GET /api/jobs
 exports.getJobs = async (req, res) => {
+  let conn;
   try {
     const conn = await pool.getConnection();
     const rows = await conn.query(
@@ -26,6 +27,7 @@ exports.getJobs = async (req, res) => {
 // GET /api/jobs/:id
 exports.getJobById = async (req, res) => {
   const { id } = req.params;
+  let conn;
   try {
     const conn = await pool.getConnection();
     const [job] = await conn.query('SELECT * FROM jobs WHERE id = ?', [id]);
@@ -45,7 +47,7 @@ exports.postJob = async (req, res) => {
     title, description, budget, location, suburb, postcode, region_id, user_id,
     category, tools_required, start_date
   } = req.body;
-
+  let conn;
   try {
     const conn = await pool.getConnection();
     await conn.query(
@@ -66,6 +68,7 @@ exports.postJob = async (req, res) => {
 // POST /api/jobs/:id/complete
 exports.completeJob = async (req, res) => {
   const { id } = req.params;
+  let conn;
   try {
     const conn = await pool.getConnection();
     await conn.query(
