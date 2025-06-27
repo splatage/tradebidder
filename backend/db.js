@@ -7,3 +7,5 @@ const pool = mariadb.createPool({
   database: process.env.DB_NAME,
   connectionLimit: 10,
 });
+
+module.exports = pool;
