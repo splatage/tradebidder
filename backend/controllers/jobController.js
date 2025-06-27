@@ -18,6 +18,8 @@ exports.getJobs = async (req, res) => {
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -32,6 +34,8 @@ exports.getJobById = async (req, res) => {
     res.json(job);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -54,6 +58,8 @@ exports.postJob = async (req, res) => {
     res.status(201).json({ message: 'Job posted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 };
 
@@ -70,5 +76,7 @@ exports.completeJob = async (req, res) => {
     res.json({ message: 'Job marked as complete' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 };
