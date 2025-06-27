@@ -1,0 +1,1 @@
+mysql -u your_user -p tradebidder < file.sql
