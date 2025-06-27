@@ -1,4 +1,10 @@
-exports.getJobs = (req, res) => res.json([{ id: 1, title: 'Fix sink', description: 'Kitchen leak', budget: 150, location: 'Wellington' }]);
-exports.getJobById = (req, res) => res.json({ id: req.params.id, title: 'Fix sink', description: 'Kitchen leak', budget: 150, location: 'Wellington' });
-exports.postJob = (req, res) => res.status(201).json({ message: 'Job created' });
-exports.completeJob = (req, res) => res.json({ message: 'Job marked as complete' });
+exports.getJobs = async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    const rows = await conn.query('SELECT * FROM jobs ORDER BY created_at DESC LIMIT 100');
+    conn.release();
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
