@@ -1,6 +1,8 @@
 // controllers/jobController.js
 const pool = require('../db');
 
+console.log("pool.getConnection = ", typeof pool.getConnection);
+
 // GET /api/jobs
 exports.getJobs = async (req, res) => {
   try {
