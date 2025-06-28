@@ -10,6 +10,8 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/bids', require('./routes/bids'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/portfolio', require('./routes/portfolio'));
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API server running on port ${PORT}`));
