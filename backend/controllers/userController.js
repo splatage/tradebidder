@@ -3,7 +3,7 @@ exports.suspendUser = (req, res) => res.json({ message: 'User suspended' });
 
 const db = require('../db');
 const { v4: uuidv4 } = require('uuid');
-// const sendEmail = require('../utils/sendEmail'); // Uncomment if using your utility
+const sendEmail = require('../utils/sendEmail');
 const APP_URL = process.env.APP_URL || 'https://yourdomain.com';
 
 exports.registerUser = async (req, res) => {
