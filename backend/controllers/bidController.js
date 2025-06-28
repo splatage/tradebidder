@@ -47,3 +47,31 @@ exports.getBidById = async (req, res) => {
     if (conn) conn.release();
   }
 };
+
+// backend/controllers/bidController.js
+const db = require('../db');
+
+// List all accepted/won bids for current user
+exports.getAcceptedBids = async (req, res) => {
+  let conn;
+  try {
+    const userId = req.user?.id || req.query.user_id; // Get user ID from auth/session (or query param for admin)
+    if (!userId) return res.status(401).json({ error: 'Not authenticated' });
+
+    conn = await db.getConnection();
+    const rows = await conn.query(
+      `SELECT b.*, j.title AS job_title, j.location
+       FROM bids b
+       JOIN jobs j ON b.job_id = j.id
+       WHERE b.user_id = ? AND b.status = 'accepted'
+       ORDER BY b.created_at DESC`,
+      [userId]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('getAcceptedBids error:', err);
+    res.status(500).json({ error: 'Failed to fetch accepted bids' });
+  } finally {
+    if (conn) conn.release();
+  }
+};
