@@ -6,3 +6,14 @@ frontend/.env
 frontend/dist/
 backend/package-lock.json
 backend/package.json
+backend/test_db.js
+backend/test_email.js
+scripts/
+sql/seed_bids.sql
+sql/seed_flags.sql
+sql/seed_jobs(1).sql
+sql/seed_messages.sql
+sql/seed_notifications.sql
+sql/seed_portfolio.sql
+sql/seed_reviews.sql
+sql/seed_users(1).sql
