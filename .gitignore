@@ -19,3 +19,4 @@ sql/seed_reviews.sql
 sql/seed_users(1).sql
 frontend/package-lock.json
 frontend/package.json
+dist/index.html
