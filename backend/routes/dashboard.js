@@ -1,8 +1,8 @@
-// tradebidder-api-backend/routes/dashboard.js
 const express = require('express');
 const router = express.Router();
 const { getDashboard } = require('../controllers/dashboardController');
+const requireAuth = require('../middleware/requireAuth'); // Use your auth middleware!
 
-router.get('/', getDashboard);
+router.get('/', requireAuth, getDashboard);
 
 module.exports = router;
