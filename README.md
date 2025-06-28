@@ -61,6 +61,8 @@ bash
 Copy
 cd backend && npm install
 npm install cors --save
+npm install uuid
+npm install nodemailer
 
 cd ../frontend && npm install
 3. Configure Environment
