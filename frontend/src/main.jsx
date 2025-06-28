@@ -5,6 +5,7 @@ import App from './App';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+@import "tailwindcss";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
