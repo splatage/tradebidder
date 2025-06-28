@@ -1,9 +1,11 @@
--- users.sql
+-- Enhanced Database Schema with Performance Optimizations
+
+-- USERS TABLE
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(100),
   email VARCHAR(100) UNIQUE,
-  password_hash TEXT,
+  password_hash VARCHAR(255),
   dob DATE,
   is_verified BOOLEAN DEFAULT FALSE,
   gst_number VARCHAR(50),
@@ -11,17 +13,19 @@ CREATE TABLE users (
   id_uploaded BOOLEAN DEFAULT FALSE,
   is_suspended BOOLEAN DEFAULT FALSE,
   role ENUM('user', 'admin') DEFAULT 'user',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_email (email),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
 
-
--- regions.sql
+-- REGIONS TABLE
 CREATE TABLE regions (
   id INT PRIMARY KEY AUTO_INCREMENT,
   country VARCHAR(100),
   region_name VARCHAR(100),
-  region_code VARCHAR(10)
-);
+  region_code VARCHAR(10),
+  INDEX idx_country_region (country, region_code)
+) ENGINE=InnoDB;
 
 INSERT INTO regions (country, region_name, region_code) VALUES
 ('New Zealand', 'Auckland', 'AKL'),
@@ -30,8 +34,7 @@ INSERT INTO regions (country, region_name, region_code) VALUES
 ('Australia', 'New South Wales', 'NSW'),
 ('Australia', 'Victoria', 'VIC');
 
-
--- jobs.sql
+-- JOBS TABLE
 CREATE TABLE jobs (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
@@ -43,8 +46,8 @@ CREATE TABLE jobs (
   location_region VARCHAR(100),
   location_suburb VARCHAR(100),
   location_postcode VARCHAR(20),
-  latitude DECIMAL(10,6),
-  longitude DECIMAL(10,6),
+  latitude DECIMAL(9,6),
+  longitude DECIMAL(9,6),
   region_id INT,
   start_date DATE,
   end_date DATE,
@@ -52,11 +55,14 @@ CREATE TABLE jobs (
   is_active BOOLEAN DEFAULT TRUE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (region_id) REFERENCES regions(id)
-);
+  FOREIGN KEY (region_id) REFERENCES regions(id),
+  INDEX idx_user_id (user_id),
+  INDEX idx_region_id (region_id),
+  INDEX idx_created_at (created_at),
+  INDEX idx_location (latitude, longitude)
+) ENGINE=InnoDB;
 
-
--- bids.sql
+-- BIDS TABLE
 CREATE TABLE bids (
   id INT PRIMARY KEY AUTO_INCREMENT,
   job_id INT NOT NULL,
@@ -66,11 +72,12 @@ CREATE TABLE bids (
   status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (job_id) REFERENCES jobs(id),
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  INDEX idx_job_user_status (job_id, user_id, status),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
 
-
--- messages.sql
+-- MESSAGES TABLE
 CREATE TABLE messages (
   id INT PRIMARY KEY AUTO_INCREMENT,
   job_id INT NOT NULL,
@@ -80,11 +87,12 @@ CREATE TABLE messages (
   timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (job_id) REFERENCES jobs(id),
   FOREIGN KEY (sender_id) REFERENCES users(id),
-  FOREIGN KEY (recipient_id) REFERENCES users(id)
-);
+  FOREIGN KEY (recipient_id) REFERENCES users(id),
+  INDEX idx_job_participants (job_id, sender_id, recipient_id),
+  INDEX idx_timestamp (timestamp)
+) ENGINE=InnoDB;
 
-
--- notifications.sql
+-- NOTIFICATIONS TABLE
 CREATE TABLE notifications (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
@@ -93,11 +101,11 @@ CREATE TABLE notifications (
   link VARCHAR(255),
   is_read BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  INDEX idx_user_isread_created (user_id, is_read, created_at)
+) ENGINE=InnoDB;
 
-
--- portfolio_items.sql
+-- PORTFOLIO_ITEMS TABLE
 CREATE TABLE portfolio_items (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
@@ -111,11 +119,12 @@ CREATE TABLE portfolio_items (
   is_public BOOLEAN DEFAULT TRUE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (job_id) REFERENCES jobs(id)
-);
+  FOREIGN KEY (job_id) REFERENCES jobs(id),
+  INDEX idx_user_public (user_id, is_public),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
 
-
--- flags.sql
+-- FLAGS TABLE
 CREATE TABLE flags (
   id INT PRIMARY KEY AUTO_INCREMENT,
   type ENUM('review', 'job', 'user'),
@@ -125,11 +134,12 @@ CREATE TABLE flags (
   admin_notes TEXT,
   status ENUM('open', 'resolved', 'dismissed') DEFAULT 'open',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (reporter_id) REFERENCES users(id)
-);
+  FOREIGN KEY (reporter_id) REFERENCES users(id),
+  INDEX idx_type_status (type, status),
+  INDEX idx_target_id (target_id)
+) ENGINE=InnoDB;
 
-
--- reviews.sql
+-- REVIEWS TABLE
 CREATE TABLE reviews (
   id INT PRIMARY KEY AUTO_INCREMENT,
   job_id INT NOT NULL,
@@ -141,8 +151,10 @@ CREATE TABLE reviews (
   is_flagged BOOLEAN DEFAULT FALSE,
   visible BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_review_job FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
-  CONSTRAINT fk_review_reviewer FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_review_reviewee FOREIGN KEY (reviewee_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
+  FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+  FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (reviewee_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_reviewee_visibility (reviewee_id, visible),
+  INDEX idx_reviewer_job (reviewer_id, job_id),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB;
