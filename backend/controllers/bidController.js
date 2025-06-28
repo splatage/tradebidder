@@ -48,9 +48,6 @@ exports.getBidById = async (req, res) => {
   }
 };
 
-// backend/controllers/bidController.js
-const db = require('../db');
-
 // List all accepted/won bids for current user
 exports.getAcceptedBids = async (req, res) => {
   let conn;
