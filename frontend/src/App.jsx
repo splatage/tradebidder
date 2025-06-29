@@ -2,6 +2,7 @@ import { Outlet, Link } from 'react-router-dom';
 
 export default function App() {
   return (
+   <div className="min-h-screen bg-neutral">
     <div style={{ fontFamily: 'Arial, sans-serif' }}>
       <nav style={{
         display: 'flex',
@@ -21,6 +22,7 @@ export default function App() {
         <Outlet />
       </div>
     </div>
+   </div>
   );
 }
 
