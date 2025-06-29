@@ -1,5 +1,5 @@
+@import "@fontsource/inter/index.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "@fontsource/inter/variable.css";
 body { font-family: 'InterVariable', system-ui, sans-serif; }
